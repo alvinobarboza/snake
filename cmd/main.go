@@ -5,6 +5,9 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/alvinobarboza/snake/internal"
+	"github.com/alvinobarboza/snake/internal/game"
+	"github.com/alvinobarboza/snake/internal/player"
 	"golang.org/x/term"
 )
 
@@ -36,13 +39,13 @@ func main() {
 		fmt.Print("Heigth must be a number: ", hs, "\n\r")
 		return
 	}
-	player := &Player{}
+	player := player.NewPlayer()
 
-	game := NewGame(player)
+	game := game.NewGame(player)
 
 	game.CreateCanvas(w, h)
 
-	input := make(chan InputKey)
+	input := make(chan internal.InputKey)
 	go listenInput(input)
 
 	for {
@@ -55,10 +58,10 @@ func main() {
 	}
 }
 
-func listenInput(input chan InputKey) {
+func listenInput(input chan internal.InputKey) {
 	b := make([]byte, 1)
 	for {
 		os.Stdin.Read(b)
-		input <- InputKey(b)
+		input <- internal.InputKey(b)
 	}
 }
