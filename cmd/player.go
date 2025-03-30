@@ -8,7 +8,12 @@ type Player struct {
 	posY int
 }
 
-func (p *Player) ProcessKey(key Direction) {
+func (p *Player) Update() {
+	p.posX += p.x
+	p.posY += p.y
+}
+
+func (p *Player) ProcessKey(key InputKey) {
 	switch key {
 	case UP:
 		p.y = 1

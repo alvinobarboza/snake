@@ -8,16 +8,6 @@ import (
 	"golang.org/x/term"
 )
 
-type Direction string
-
-const (
-	UP    Direction = "w"
-	DOWN  Direction = "s"
-	LEFT  Direction = "a"
-	RIGHT Direction = "d"
-	QUIT  Direction = "q"
-)
-
 func main() {
 	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 	if err != nil {
@@ -52,27 +42,23 @@ func main() {
 
 	game.CreateCanvas(w, h)
 
-	input := make(chan Direction)
+	input := make(chan InputKey)
 	go listenInput(input)
 
 	for {
 		select {
 		case key := <-input:
-			if key == QUIT {
-				fmt.Print("Exited", "\n\r")
-				os.Exit(0)
-			}
-			game.p.ProcessKey(key)
+			game.ProcessKey(key)
 		default:
-			game.Render()
+			game.Update()
 		}
 	}
 }
 
-func listenInput(input chan Direction) {
+func listenInput(input chan InputKey) {
 	b := make([]byte, 1)
 	for {
 		os.Stdin.Read(b)
-		input <- Direction(b)
+		input <- InputKey(b)
 	}
 }

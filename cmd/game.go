@@ -2,7 +2,20 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"time"
+)
+
+type InputKey string
+
+const (
+	UP    InputKey = "w"
+	DOWN  InputKey = "s"
+	LEFT  InputKey = "a"
+	RIGHT InputKey = "d"
+	QUIT  InputKey = "q"
+
+	PADDING int = 2
 )
 
 type Game struct {
@@ -20,11 +33,36 @@ func NewGame(p *Player) *Game {
 	}
 }
 
+func (g *Game) ProcessKey(key InputKey) {
+	if key == QUIT {
+		fmt.Print("Exited", "\n\r")
+		os.Exit(0)
+	}
+	g.p.ProcessKey(key)
+}
+
+func (g *Game) Update() {
+	g.clearScreen()
+
+	g.p.Update()
+
+	y := g.p.posY % g.h
+	x := g.p.posX % g.w
+
+	fmt.Print(g.canvas[y*g.h+x], "\n\r")
+
+	g.Render()
+	time.Sleep(time.Millisecond * 100)
+}
+
 func (g *Game) CreateCanvas(w, h int) {
 	g.h = h
 	g.w = w
 
 	g.canvas = make([]string, 0)
+
+	h += PADDING
+	w += PADDING
 
 	for hi := range h {
 		for wi := range w {
@@ -59,9 +97,11 @@ func (g *Game) CreateCanvas(w, h int) {
 }
 
 func (g *Game) Render() {
-	time.Sleep(time.Millisecond * 33)
-	fmt.Print("\033[H\033[2J", g.p, len(g.canvas), g.h*g.w, "\n\r")
 	for _, s := range g.canvas {
 		fmt.Print(s)
 	}
+}
+
+func (g *Game) clearScreen() {
+	fmt.Print("\033[H\033[2J", g.p, len(g.canvas), g.h*g.w, "\n\r")
 }
