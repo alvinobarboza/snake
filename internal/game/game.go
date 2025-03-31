@@ -16,7 +16,8 @@ type Game struct {
 	w int
 	h int
 
-	canvas []string
+	canvas  []string
+	borders []string
 }
 
 func NewGame(p player.Player) *Game {
@@ -52,52 +53,54 @@ func (g *Game) CreateCanvas(w, h int) {
 
 	g.canvas = make([]string, 0)
 
-	h += internal.PADDING
-	w += internal.PADDING
-
-	temp := 0
-	for hi := range h {
-		for wi := range w {
-			if hi == 0 && wi == 0 {
-				g.canvas = append(g.canvas, "┌")
-				continue
-			}
-			if hi == 0 && wi == w-1 {
-				g.canvas = append(g.canvas, "┐")
-				continue
-			}
-			if (hi == 0 || hi == h-1) && wi < w-1 && wi > 0 {
-				g.canvas = append(g.canvas, "─")
-				continue
-			}
-			if hi == h-1 && wi == 0 {
-				g.canvas = append(g.canvas, "└")
-				continue
-			}
-			if hi == h-1 && wi == w-1 {
-				g.canvas = append(g.canvas, "┘")
-				continue
-			}
-			if wi == 0 || wi == w-1 {
-				g.canvas = append(g.canvas, "│")
-				continue
-			}
-			if temp == 10 {
-				temp = 0
-			}
-			temp++
-			stemp := strconv.Itoa(temp)
-			g.canvas = append(g.canvas, stemp)
+	for range h {
+		for range w {
+			g.canvas = append(g.canvas, g.emptyChar)
 		}
-		temp = 0
-		g.canvas = append(g.canvas, "\n\r")
+	}
+
+	for i := range internal.BORDERS {
+		if i == 0 {
+			g.borders = append(g.borders, "┌")
+		} else {
+			g.borders = append(g.borders, "└")
+		}
+		for range w {
+			g.borders = append(g.borders, "─")
+		}
+		if i == 0 {
+			g.borders = append(g.borders, "┐")
+		} else {
+			g.borders = append(g.borders, "┘")
+		}
 	}
 }
 
 func (g *Game) Render() {
-	for _, s := range g.canvas {
-		fmt.Print(s)
+	borderWidth := len(g.borders) / 2
+
+	renderString := ""
+
+	for i := range borderWidth {
+		renderString += g.borders[i]
 	}
+	renderString += "\n\r "
+
+	for y := range g.h {
+		for x := range g.w {
+			renderString += g.canvas[y*g.w+x]
+		}
+		if y == g.h-1 {
+			renderString += " \n\r"
+			continue
+		}
+		renderString += " \n\r "
+	}
+
+	for i := range borderWidth {
+		renderString += g.borders[i+borderWidth]
+	}
+	fmt.Print(renderString + "\n\r")
 }
 
 func (g *Game) clearScreen() {
