@@ -9,5 +9,5 @@ const (
 	RIGHT InputKey = "d"
 	QUIT  InputKey = "q"
 
-	PADDING int = 2
+	BORDERS int = 2
 )

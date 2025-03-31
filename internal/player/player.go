@@ -6,6 +6,7 @@ import (
 
 type Player interface {
 	GetPosXY() (int, int)
+	GetLastPosXY() (int, int)
 	Update()
 	ProcessKey(key internal.InputKey)
 }
@@ -16,6 +17,9 @@ type player struct {
 
 	posX int
 	posY int
+
+	lastPosX int
+	lastPosY int
 }
 
 func NewPlayer() *player {
@@ -26,7 +30,14 @@ func (p *player) GetPosXY() (int, int) {
 	return p.posX, p.posY
 }
 
+func (p *player) GetLastPosXY() (int, int) {
+	return p.lastPosX, p.lastPosY
+}
+
 func (p *player) Update() {
+	p.lastPosX = p.posX
+	p.lastPosY = p.posY
+
 	p.posX += p.x
 	p.posY += p.y
 }
@@ -34,11 +45,11 @@ func (p *player) Update() {
 func (p *player) ProcessKey(key internal.InputKey) {
 	switch key {
 	case internal.UP:
-		p.y = 1
+		p.y = -1
 		p.x = 0
 		return
 	case internal.DOWN:
-		p.y = -1
+		p.y = 1
 		p.x = 0
 		return
 	case internal.RIGHT:

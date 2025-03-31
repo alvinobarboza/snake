@@ -3,7 +3,6 @@ package game
 import (
 	"fmt"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/alvinobarboza/snake/internal"
@@ -18,11 +17,16 @@ type Game struct {
 
 	canvas  []string
 	borders []string
+
+	emptyChar  string
+	playerChar string
 }
 
 func NewGame(p player.Player) *Game {
 	return &Game{
-		p: p,
+		p:          p,
+		emptyChar:  " ",
+		playerChar: "#",
 	}
 }
 
@@ -39,12 +43,14 @@ func (g *Game) Update() {
 	g.p.Update()
 	g.clearScreen()
 
+	i_last := g.normalizedLastIndex()
 	i := g.normalizedIndex()
 
-	fmt.Print(g.canvas[i], "\n\r")
+	g.canvas[i_last] = g.emptyChar
+	g.canvas[i] = g.playerChar
 
 	g.Render()
-	time.Sleep(time.Millisecond * 100)
+	time.Sleep(time.Millisecond * 200)
 }
 
 func (g *Game) CreateCanvas(w, h int) {
@@ -104,11 +110,28 @@ func (g *Game) Render() {
 }
 
 func (g *Game) clearScreen() {
-	fmt.Print("\033[H\033[2J", g.p, len(g.canvas), g.h*g.w, "\n\r")
+	fmt.Print("\033[H\033[2J")
 }
 
 func (g *Game) normalizedIndex() int {
 	posX, posY := g.p.GetPosXY()
+	x := 0
+	y := 0
+	if posX < 0 {
+		x = (g.w - 1) - ((posX * -1) % g.w)
+	} else {
+		x = posX % g.w
+	}
+	if posY < 0 {
+		y = (g.h - 1) - ((posY * -1) % g.h)
+	} else {
+		y = posY % g.h
+	}
+	return y*g.w + x
+}
+
+func (g *Game) normalizedLastIndex() int {
+	posX, posY := g.p.GetLastPosXY()
 	x := 0
 	y := 0
 	if posX < 0 {
