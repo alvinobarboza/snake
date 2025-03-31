@@ -2,7 +2,6 @@ package game
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/alvinobarboza/snake/internal"
@@ -30,12 +29,13 @@ func NewGame(p player.Player) *Game {
 	}
 }
 
-func (g *Game) ProcessKey(key internal.InputKey) {
+func (g *Game) ProcessKey(key internal.InputKey) bool {
 	if key == internal.QUIT {
 		fmt.Print("Exited", "\n\r")
-		os.Exit(0)
+		return true
 	}
 	g.p.ProcessKey(key)
+	return false
 }
 
 func (g *Game) Update() {

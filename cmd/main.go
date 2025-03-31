@@ -51,7 +51,10 @@ func main() {
 	for {
 		select {
 		case key := <-input:
-			game.ProcessKey(key)
+			//TODO: Better exit handling
+			if game.ProcessKey(key) {
+				return
+			}
 		default:
 			game.Update()
 		}
