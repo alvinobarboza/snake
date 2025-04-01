@@ -45,7 +45,7 @@ func (g *Game) Update() {
 
 	g.p.Update()
 
-	i_last := g.normalizedLastIndex(g.p.GetLastPosXY())
+	i_last := g.normalizedIndex(g.p.GetLastPosXY())
 	i := g.normalizedIndex(g.p.GetPosXY())
 
 	g.canvas[i_last] = g.emptyChar
@@ -123,22 +123,6 @@ func (g *Game) clearScreen() {
 }
 
 func (g *Game) normalizedIndex(posX, posY int) int {
-	x := 0
-	y := 0
-	if posX < 0 {
-		x = (g.w - 1) - ((posX * -1) % g.w)
-	} else {
-		x = posX % g.w
-	}
-	if posY < 0 {
-		y = (g.h - 1) - ((posY * -1) % g.h)
-	} else {
-		y = posY % g.h
-	}
-	return y*g.w + x
-}
-
-func (g *Game) normalizedLastIndex(posX, posY int) int {
 	x := 0
 	y := 0
 	if posX < 0 {
