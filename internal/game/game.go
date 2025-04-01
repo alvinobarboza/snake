@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"math/rand/v2"
 	"time"
 
 	"github.com/alvinobarboza/snake/internal"
@@ -19,13 +20,15 @@ type Game struct {
 
 	emptyChar  string
 	playerChar string
+	pointChar  string
 }
 
 func NewGame(p player.Player) *Game {
 	return &Game{
 		p:          p,
 		emptyChar:  " ",
-		playerChar: "#",
+		playerChar: "■",
+		pointChar:  "X",
 	}
 }
 
@@ -42,8 +45,8 @@ func (g *Game) Update() {
 
 	g.p.Update()
 
-	i_last := g.normalizedLastIndex()
-	i := g.normalizedIndex()
+	i_last := g.normalizedLastIndex(g.p.GetLastPosXY())
+	i := g.normalizedIndex(g.p.GetPosXY())
 
 	g.canvas[i_last] = g.emptyChar
 	g.canvas[i] = g.playerChar
@@ -81,6 +84,8 @@ func (g *Game) CreateCanvas(w, h int) {
 			g.borders = append(g.borders, "┘")
 		}
 	}
+
+	g.spawnPoint()
 }
 
 func (g *Game) Render() {
@@ -114,8 +119,7 @@ func (g *Game) clearScreen() {
 	fmt.Printf("\033[%dA", g.h+2)
 }
 
-func (g *Game) normalizedIndex() int {
-	posX, posY := g.p.GetPosXY()
+func (g *Game) normalizedIndex(posX, posY int) int {
 	x := 0
 	y := 0
 	if posX < 0 {
@@ -131,8 +135,7 @@ func (g *Game) normalizedIndex() int {
 	return y*g.w + x
 }
 
-func (g *Game) normalizedLastIndex() int {
-	posX, posY := g.p.GetLastPosXY()
+func (g *Game) normalizedLastIndex(posX, posY int) int {
 	x := 0
 	y := 0
 	if posX < 0 {
@@ -146,4 +149,9 @@ func (g *Game) normalizedLastIndex() int {
 		y = posY % g.h
 	}
 	return y*g.w + x
+}
+
+func (g *Game) spawnPoint() {
+	i := rand.Int32N(int32(g.h) * int32(g.w))
+	g.canvas[i] = g.pointChar
 }

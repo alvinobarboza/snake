@@ -24,7 +24,7 @@ func TestPlayerPos(t *testing.T) {
 
 	g.h = 2
 	g.w = 2
-	i := g.normalizedIndex()
+	i := g.normalizedIndex(g.p.GetPosXY())
 
 	if i < 0 {
 		t.Error("Expected positive, got:", i)
@@ -45,7 +45,7 @@ func TestScreenGen(t *testing.T) {
 
 	border := 2
 
-	g.CreateCanvas(2, 2)
+	g.CreateCanvas(width, height)
 
 	if len(g.canvas) != (width * height) {
 		t.Errorf("Expected %d, got: %d", (width * height), len(g.canvas))
@@ -66,5 +66,29 @@ func TestScreenGen(t *testing.T) {
 
 	if !checkWant {
 		t.Errorf("Expected %v, got: %v", true, checkWant)
+	}
+}
+
+func TestRandomSpawn(t *testing.T) {
+	p := playerTest{}
+	g := NewGame(p)
+
+	width := 2
+	height := 2
+
+	g.CreateCanvas(width, height)
+
+	g.spawnPoint()
+
+	want := "X"
+	got := "-"
+	for _, s := range g.canvas {
+		if s == g.pointChar {
+			got = s
+		}
+	}
+
+	if want != got {
+		t.Errorf("Want: %s, got: %s", want, got)
 	}
 }
