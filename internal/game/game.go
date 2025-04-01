@@ -157,7 +157,7 @@ func (g *Game) normalizedLastIndex(posX, posY int) int {
 func (g *Game) spawnPoint(i_avoid int) {
 	i := 0
 	for {
-		i = int(rand.Int32N(int32(g.h) * int32(g.w)))
+		i = rand.IntN(g.h * g.w)
 		if i != i_avoid {
 			break
 		}
