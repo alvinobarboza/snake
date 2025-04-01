@@ -78,7 +78,7 @@ func TestRandomSpawn(t *testing.T) {
 
 	g.CreateCanvas(width, height)
 
-	g.spawnPoint()
+	g.spawnPoint(0)
 
 	want := "X"
 	got := "-"
