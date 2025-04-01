@@ -22,7 +22,7 @@ func main() {
 		fmt.Print(
 			"Inform width and heigth:",
 			"\n\r",
-			".\\game w h",
+			".\\game w h\n\r",
 			"i.e.\n\r\n\r",
 			".\\game 40 15\n\r")
 		return
