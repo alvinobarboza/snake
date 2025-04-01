@@ -31,7 +31,7 @@ func NewGame(p player.Player) *Game {
 
 func (g *Game) ProcessKey(key internal.InputKey) bool {
 	if key == internal.QUIT {
-		fmt.Print("Exited", "\n\r")
+		fmt.Print("Exited\033[0J", "\n\r")
 		return true
 	}
 	g.p.ProcessKey(key)
@@ -41,7 +41,6 @@ func (g *Game) ProcessKey(key internal.InputKey) bool {
 func (g *Game) Update() {
 
 	g.p.Update()
-	g.clearScreen()
 
 	i_last := g.normalizedLastIndex()
 	i := g.normalizedIndex()
@@ -50,7 +49,9 @@ func (g *Game) Update() {
 	g.canvas[i] = g.playerChar
 
 	g.Render()
-	time.Sleep(time.Millisecond * 200)
+
+	time.Sleep(time.Millisecond * 120)
+	g.clearScreen()
 }
 
 func (g *Game) CreateCanvas(w, h int) {
@@ -110,7 +111,7 @@ func (g *Game) Render() {
 }
 
 func (g *Game) clearScreen() {
-	fmt.Print("\033[H\033[2J")
+	fmt.Printf("\033[%dA", g.h+2)
 }
 
 func (g *Game) normalizedIndex() int {
