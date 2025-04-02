@@ -7,6 +7,7 @@ import (
 	"github.com/alvinobarboza/snake/internal"
 	"github.com/alvinobarboza/snake/internal/game"
 	"github.com/alvinobarboza/snake/internal/player"
+	"github.com/olekukonko/ts"
 	"golang.org/x/term"
 )
 
@@ -17,10 +18,10 @@ func main() {
 	}
 	defer term.Restore(int(os.Stdin.Fd()), oldState)
 
-	w, h, errS := term.GetSize(int(os.Stdin.Fd()))
+	s, e := ts.GetSize()
 
-	if errS != nil {
-		fmt.Println(err)
+	if e != nil {
+		fmt.Println(e)
 		return
 	}
 
@@ -28,7 +29,7 @@ func main() {
 
 	game := game.NewGame(player)
 
-	game.CreateCanvas(w, h)
+	game.CreateCanvas(s.Col(), s.Row())
 
 	input := make(chan internal.InputKey)
 	go listenInput(input)
