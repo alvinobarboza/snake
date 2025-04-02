@@ -48,7 +48,8 @@ func (g *Game) Update() {
 
 	g.canvas[i_last] = g.emptyChar
 	if g.canvas[i] == g.pointChar {
-		g.spawnPoint(i)
+		spawIndex := g.spawnPoint(i)
+		g.canvas[spawIndex] = g.pointChar
 	}
 	g.canvas[i] = g.p.Visuals()
 
@@ -89,7 +90,8 @@ func (g *Game) CreateCanvas(w, h int) {
 		}
 	}
 
-	g.spawnPoint(0)
+	i := g.spawnPoint(0)
+	g.canvas[i] = g.pointChar
 }
 
 func (g *Game) Render() {
@@ -139,7 +141,7 @@ func (g *Game) normalizedIndex(posX, posY int) int {
 	return y*g.w + x
 }
 
-func (g *Game) spawnPoint(i_avoid int) {
+func (g *Game) spawnPoint(i_avoid int) int {
 	i := 0
 	for {
 		i = rand.IntN(g.h * g.w)
@@ -147,5 +149,5 @@ func (g *Game) spawnPoint(i_avoid int) {
 			break
 		}
 	}
-	g.canvas[i] = g.pointChar
+	return i
 }
