@@ -18,17 +18,15 @@ type Game struct {
 	canvas  []string
 	borders []string
 
-	emptyChar  string
-	playerChar string
-	pointChar  string
+	emptyChar string
+	pointChar string
 }
 
 func NewGame(p player.Player) *Game {
 	return &Game{
-		p:          p,
-		emptyChar:  " ",
-		playerChar: "■",
-		pointChar:  "X",
+		p:         p,
+		emptyChar: " ",
+		pointChar: "X",
 	}
 }
 
@@ -52,7 +50,7 @@ func (g *Game) Update() {
 	if g.canvas[i] == g.pointChar {
 		g.spawnPoint(i)
 	}
-	g.canvas[i] = g.playerChar
+	g.canvas[i] = g.p.Visuals()
 
 	g.Render()
 

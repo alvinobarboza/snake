@@ -7,6 +7,7 @@ import (
 type Player interface {
 	GetPosXY() (int, int)
 	GetLastPosXY() (int, int)
+	Visuals() string
 	Update()
 	ProcessKey(key internal.InputKey)
 }
@@ -20,10 +21,12 @@ type player struct {
 
 	lastPosX int
 	lastPosY int
+
+	playerChar string
 }
 
 func NewPlayer() *player {
-	return &player{}
+	return &player{playerChar: "■"}
 }
 
 func (p *player) GetPosXY() (int, int) {
@@ -32,6 +35,10 @@ func (p *player) GetPosXY() (int, int) {
 
 func (p *player) GetLastPosXY() (int, int) {
 	return p.lastPosX, p.lastPosY
+}
+
+func (p *player) Visuals() string {
+	return p.playerChar
 }
 
 func (p *player) Update() {
