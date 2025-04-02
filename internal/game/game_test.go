@@ -6,10 +6,16 @@ import (
 	"github.com/alvinobarboza/snake/internal"
 )
 
+const (
+	width  int = internal.PADDING_SIDES + 3
+	height int = internal.PADDING_TOP_BOTTOM + 3
+)
+
 type playerTest struct {
 }
 
-func (p playerTest) Update() {}
+func (p playerTest) Update()         {}
+func (p playerTest) Visuals() string { return "" }
 func (p playerTest) GetPosXY() (int, int) {
 	return 0, 1
 }
@@ -35,31 +41,39 @@ func TestScreenGen(t *testing.T) {
 	p := &playerTest{}
 	g := NewGame(p)
 
-	want_border := []string{
-		"┌", "─", "─", "┐",
-		"└", "─", "─", "┘",
-	}
+	preComputedWidth := (width - internal.PADDING_SIDES)
+	preComputedHeight := (height - internal.PADDING_TOP_BOTTOM)
 
-	width := 4
-	height := 4
+	want_border := make([]string, 0)
+	want_border = append(want_border, "┌")
+	for range preComputedWidth {
+		want_border = append(want_border, "─")
+	}
+	want_border = append(want_border, "┐")
+	want_border = append(want_border, "└")
+	for range preComputedWidth {
+		want_border = append(want_border, "─")
+	}
+	want_border = append(want_border, "┘")
 
 	g.CreateCanvas(width, height)
 
-	if g.w != (width-internal.BORDERS) ||
-		g.h != (height-internal.BORDERS) {
+	if g.w != preComputedWidth ||
+		g.h != preComputedHeight {
 		t.Errorf(
 			"Wanted %d %d, got: %d %d",
-			(height - internal.BORDERS), (width - internal.BORDERS),
+			preComputedHeight,
+			preComputedWidth,
 			g.h, g.w)
 	}
 
-	wantCanvas := ((width - internal.BORDERS) * (height - internal.BORDERS))
+	wantCanvas := (preComputedWidth * preComputedHeight)
 
 	if len(g.canvas) != wantCanvas {
 		t.Errorf("Expected %d, got: %d", (width * height), len(g.canvas))
 
 	}
-	broderSizeWant := (width) * 2
+	broderSizeWant := (preComputedWidth + internal.BORDERS) * 2
 	if len(g.borders) != broderSizeWant {
 		t.Errorf("Expected %d, got: %d", broderSizeWant, len(g.borders))
 	}
@@ -80,9 +94,6 @@ func TestScreenGen(t *testing.T) {
 func TestRandomSpawn(t *testing.T) {
 	p := playerTest{}
 	g := NewGame(p)
-
-	width := 4
-	height := 4
 
 	g.CreateCanvas(width, height)
 
