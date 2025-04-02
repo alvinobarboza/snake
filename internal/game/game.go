@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math/rand/v2"
 	"os"
-	"time"
 
 	"github.com/alvinobarboza/snake/internal"
 	"github.com/alvinobarboza/snake/internal/player"
@@ -46,22 +45,27 @@ func (g *Game) ProcessKey(exit chan string) {
 
 func (g *Game) Update() {
 
+	ix := g.normalizedIndex(g.p.GetNextPosXY())
+	if g.canvas[ix] == g.pointChar {
+		spawIndex := g.spawnPoint(ix)
+		g.canvas[spawIndex] = g.pointChar
+		g.p.GrowTail()
+	}
+
 	g.p.Update()
 
-	i_last := g.normalizedIndex(g.p.GetLastPosXY())
 	i := g.normalizedIndex(g.p.GetPosXY())
 
-	g.canvas[i_last] = g.emptyChar
-	if g.canvas[i] == g.pointChar {
-		spawIndex := g.spawnPoint(i)
-		g.canvas[spawIndex] = g.pointChar
-	}
+	i_last := g.normalizedIndex(g.p.GetLastPosXY())
 	g.canvas[i] = g.p.Visuals()
 
-	g.Render()
-
-	time.Sleep(time.Millisecond * 120)
-	g.clearScreen()
+	for _, t := range g.p.GetTail() {
+		ix := g.normalizedIndex(t.GetXY())
+		g.canvas[ix] = g.p.Visuals()
+	}
+	if i_last != i {
+		g.canvas[i_last] = g.emptyChar
+	}
 }
 
 func (g *Game) CreateCanvas(w, h int) {
@@ -100,6 +104,7 @@ func (g *Game) CreateCanvas(w, h int) {
 }
 
 func (g *Game) Render() {
+
 	borderWidth := len(g.borders) / 2
 
 	renderString := ""
@@ -124,6 +129,8 @@ func (g *Game) Render() {
 		renderString += g.borders[i+borderWidth]
 	}
 	fmt.Print(renderString + "\n\r")
+
+	g.clearScreen()
 }
 
 func (g *Game) clearScreen() {

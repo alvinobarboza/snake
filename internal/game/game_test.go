@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/alvinobarboza/snake/internal"
+	"github.com/alvinobarboza/snake/internal/player"
 )
 
 const (
@@ -15,12 +16,19 @@ type playerTest struct {
 }
 
 func (p playerTest) Update()         {}
+func (p playerTest) GrowTail()       {}
 func (p playerTest) Visuals() string { return "" }
 func (p playerTest) GetPosXY() (int, int) {
 	return 0, 1
 }
+func (p playerTest) GetNextPosXY() (int, int) {
+	return 0, 1
+}
 func (p playerTest) GetLastPosXY() (int, int) {
 	return 0, 1
+}
+func (p playerTest) GetTail() []player.Transform {
+	return make([]player.Transform, 0)
 }
 func (p playerTest) ProcessKey(internal.InputKey) {}
 
@@ -96,8 +104,6 @@ func TestRandomSpawn(t *testing.T) {
 	g := NewGame(p)
 
 	g.CreateCanvas(width, height)
-
-	g.spawnPoint(0)
 
 	want := "X"
 	got := "-"

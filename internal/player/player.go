@@ -8,41 +8,58 @@ import (
 
 type Player interface {
 	GetPosXY() (int, int)
+	GetNextPosXY() (int, int)
 	GetLastPosXY() (int, int)
+	GetTail() []Transform
 	Visuals() string
 	Update()
 	ProcessKey(key internal.InputKey)
+	GrowTail()
 }
 
 type player struct {
-	mu sync.Mutex
+	mu        sync.Mutex
+	direction cood
+	head      Transform
 
-	x int
-	y int
-
-	posX int
-	posY int
-
-	lastPosX int
-	lastPosY int
+	tail []Transform
 
 	playerChar string
 }
 
 func NewPlayer() *player {
-	return &player{playerChar: "■"}
+	return &player{
+		playerChar: "■",
+		tail:       make([]Transform, 0),
+	}
+}
+
+func (p *player) GetNextPosXY() (int, int) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return p.head.curPos.x + p.direction.x,
+		p.head.curPos.y + p.direction.y
 }
 
 func (p *player) GetPosXY() (int, int) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	return p.posX, p.posY
+	return p.head.curPos.x, p.head.curPos.y
 }
 
 func (p *player) GetLastPosXY() (int, int) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	return p.lastPosX, p.lastPosY
+	if len(p.tail) < 1 {
+		return p.head.lastPos.x, p.head.lastPos.y
+	}
+	return p.tail[0].lastPos.x, p.tail[0].lastPos.y
+}
+
+func (p *player) GetTail() []Transform {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return p.tail
 }
 
 func (p *player) Visuals() string {
@@ -53,11 +70,19 @@ func (p *player) Update() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	p.lastPosX = p.posX
-	p.lastPosY = p.posY
+	lt := len(p.tail)
+	for i := range lt {
+		if i == lt-1 {
+			p.tail[i] = p.head
+			continue
+		}
+		p.tail[i] = p.tail[i+1]
+	}
+	p.head.lastPos.x = p.head.curPos.x
+	p.head.lastPos.y = p.head.curPos.y
 
-	p.posX += p.x
-	p.posY += p.y
+	p.head.curPos.x += p.direction.x
+	p.head.curPos.y += p.direction.y
 }
 
 func (p *player) ProcessKey(key internal.InputKey) {
@@ -66,20 +91,24 @@ func (p *player) ProcessKey(key internal.InputKey) {
 
 	switch key {
 	case internal.UP:
-		p.y = -1
-		p.x = 0
+		p.direction.y = -1
+		p.direction.x = 0
 		return
 	case internal.DOWN:
-		p.y = 1
-		p.x = 0
+		p.direction.y = 1
+		p.direction.x = 0
 		return
 	case internal.RIGHT:
-		p.y = 0
-		p.x = 1
+		p.direction.y = 0
+		p.direction.x = 1
 		return
 	case internal.LEFT:
-		p.y = 0
-		p.x = -1
+		p.direction.y = 0
+		p.direction.x = -1
 		return
 	}
+}
+
+func (p *player) GrowTail() {
+	p.tail = append(p.tail, p.head)
 }
