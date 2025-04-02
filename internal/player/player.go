@@ -50,6 +50,9 @@ func (p *player) Visuals() string {
 }
 
 func (p *player) Update() {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
 	p.lastPosX = p.posX
 	p.lastPosY = p.posY
 
