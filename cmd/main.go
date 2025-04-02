@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/alvinobarboza/snake/internal/game"
 	"github.com/alvinobarboza/snake/internal/player"
@@ -42,5 +43,7 @@ func main() {
 		default:
 			game.Update()
 		}
+		game.Render()
+		time.Sleep(time.Millisecond * 120)
 	}
 }
