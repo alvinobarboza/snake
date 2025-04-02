@@ -10,4 +10,7 @@ const (
 	QUIT  InputKey = "q"
 
 	BORDERS int = 2
+
+	PADDING_SIDES      int = 6
+	PADDING_TOP_BOTTOM int = 4
 )

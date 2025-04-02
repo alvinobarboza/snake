@@ -32,7 +32,7 @@ func TestPlayerPos(t *testing.T) {
 }
 
 func TestScreenGen(t *testing.T) {
-	p := playerTest{}
+	p := &playerTest{}
 	g := NewGame(p)
 
 	want_border := []string{
@@ -40,18 +40,26 @@ func TestScreenGen(t *testing.T) {
 		"└", "─", "─", "┘",
 	}
 
-	width := 2
-	height := 2
-
-	border := 2
+	width := 4
+	height := 4
 
 	g.CreateCanvas(width, height)
 
-	if len(g.canvas) != (width * height) {
+	if g.w != (width-internal.BORDERS) ||
+		g.h != (height-internal.BORDERS) {
+		t.Errorf(
+			"Wanted %d %d, got: %d %d",
+			(height - internal.BORDERS), (width - internal.BORDERS),
+			g.h, g.w)
+	}
+
+	wantCanvas := ((width - internal.BORDERS) * (height - internal.BORDERS))
+
+	if len(g.canvas) != wantCanvas {
 		t.Errorf("Expected %d, got: %d", (width * height), len(g.canvas))
 
 	}
-	broderSizeWant := (width + border) * 2
+	broderSizeWant := (width) * 2
 	if len(g.borders) != broderSizeWant {
 		t.Errorf("Expected %d, got: %d", broderSizeWant, len(g.borders))
 	}
@@ -73,8 +81,8 @@ func TestRandomSpawn(t *testing.T) {
 	p := playerTest{}
 	g := NewGame(p)
 
-	width := 2
-	height := 2
+	width := 4
+	height := 4
 
 	g.CreateCanvas(width, height)
 

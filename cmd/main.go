@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strconv"
 
 	"github.com/alvinobarboza/snake/internal"
 	"github.com/alvinobarboza/snake/internal/game"
@@ -18,27 +17,13 @@ func main() {
 	}
 	defer term.Restore(int(os.Stdin.Fd()), oldState)
 
-	if len(os.Args) < 3 {
-		fmt.Print(
-			"Inform width and heigth:",
-			"\n\r",
-			".\\game w h\n\r",
-			"i.e.\n\r\n\r",
-			".\\game 40 15\n\r")
+	w, h, errS := term.GetSize(int(os.Stdin.Fd()))
+
+	if errS != nil {
+		fmt.Println(err)
 		return
 	}
 
-	ws, hs := os.Args[1], os.Args[2]
-	w, err := strconv.Atoi(ws)
-	if err != nil {
-		fmt.Print("Width must be a number: ", ws, "\n\r")
-		return
-	}
-	h, err := strconv.Atoi(hs)
-	if err != nil {
-		fmt.Print("Heigth must be a number: ", hs, "\n\r")
-		return
-	}
 	player := player.NewPlayer()
 
 	game := game.NewGame(player)

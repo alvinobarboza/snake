@@ -61,6 +61,9 @@ func (g *Game) Update() {
 }
 
 func (g *Game) CreateCanvas(w, h int) {
+	h -= internal.PADDING_TOP_BOTTOM
+	w -= internal.PADDING_SIDES
+
 	g.h = h
 	g.w = w
 
