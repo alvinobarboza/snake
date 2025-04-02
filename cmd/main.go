@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alvinobarboza/snake/internal"
 	"github.com/alvinobarboza/snake/internal/game"
 	"github.com/alvinobarboza/snake/internal/player"
 	"github.com/olekukonko/ts"
@@ -31,26 +30,18 @@ func main() {
 
 	game.CreateCanvas(s.Col(), s.Row())
 
-	input := make(chan internal.InputKey)
-	go listenInput(input)
+	exit := make(chan string)
+	go game.ProcessKey(exit)
 
 	for {
 		select {
-		case key := <-input:
+		case message := <-exit:
 			//TODO: Better exit handling
-			if game.ProcessKey(key) {
-				return
-			}
+			fmt.Print(message)
+			return
+
 		default:
 			game.Update()
 		}
-	}
-}
-
-func listenInput(input chan internal.InputKey) {
-	b := make([]byte, 1)
-	for {
-		os.Stdin.Read(b)
-		input <- internal.InputKey(b)
 	}
 }

@@ -3,6 +3,7 @@ package game
 import (
 	"fmt"
 	"math/rand/v2"
+	"os"
 	"time"
 
 	"github.com/alvinobarboza/snake/internal"
@@ -30,13 +31,17 @@ func NewGame(p player.Player) *Game {
 	}
 }
 
-func (g *Game) ProcessKey(key internal.InputKey) bool {
-	if key == internal.QUIT {
-		fmt.Print("Exited\033[0J", "\n\r")
-		return true
+func (g *Game) ProcessKey(exit chan string) {
+	b := make([]byte, 1)
+	for {
+		os.Stdin.Read(b)
+		key := internal.InputKey(b)
+		if key == internal.QUIT {
+			exit <- fmt.Sprint("Exited\033[0J", "\n\r")
+			break
+		}
+		g.p.ProcessKey(key)
 	}
-	g.p.ProcessKey(key)
-	return false
 }
 
 func (g *Game) Update() {

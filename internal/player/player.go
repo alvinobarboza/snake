@@ -1,6 +1,8 @@
 package player
 
 import (
+	"sync"
+
 	"github.com/alvinobarboza/snake/internal"
 )
 
@@ -13,6 +15,8 @@ type Player interface {
 }
 
 type player struct {
+	mu sync.Mutex
+
 	x int
 	y int
 
@@ -30,10 +34,14 @@ func NewPlayer() *player {
 }
 
 func (p *player) GetPosXY() (int, int) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	return p.posX, p.posY
 }
 
 func (p *player) GetLastPosXY() (int, int) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	return p.lastPosX, p.lastPosY
 }
 
@@ -50,6 +58,9 @@ func (p *player) Update() {
 }
 
 func (p *player) ProcessKey(key internal.InputKey) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
 	switch key {
 	case internal.UP:
 		p.y = -1
