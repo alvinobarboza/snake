@@ -36,7 +36,6 @@ func main() {
 	for {
 		select {
 		case message := <-exit:
-			//TODO: Better exit handling
 			fmt.Print(message)
 			return
 
