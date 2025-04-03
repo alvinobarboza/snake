@@ -25,25 +25,23 @@ func main() {
 		return
 	}
 
-	player := player.NewPlayer()
+	p := player.NewPlayer()
+	t := player.NewTarget()
 
-	game := game.NewGame(player)
+	game := game.NewGame(p, t)
 
 	game.CreateCanvas(s.Col(), s.Row())
 
 	exit := make(chan string)
 	go game.ProcessKey(exit)
 
-	for {
-		select {
-		case message := <-exit:
-			fmt.Print(message)
-			return
-
-		default:
+	go func() {
+		for {
 			game.Update()
+			game.Render()
+			time.Sleep(time.Millisecond * 120)
 		}
-		game.Render()
-		time.Sleep(time.Millisecond * 120)
-	}
+	}()
+
+	fmt.Print(<-exit)
 }

@@ -2,7 +2,6 @@ package game
 
 import (
 	"fmt"
-	"math/rand/v2"
 	"os"
 
 	"github.com/alvinobarboza/snake/internal"
@@ -11,6 +10,7 @@ import (
 
 type Game struct {
 	p player.Player
+	t player.Target
 
 	w int
 	h int
@@ -18,15 +18,14 @@ type Game struct {
 	canvas  []string
 	borders []string
 
-	emptyChar string
-	pointChar string
+	bg string
 }
 
-func NewGame(p player.Player) *Game {
+func NewGame(p player.Player, t player.Target) *Game {
 	return &Game{
-		p:         p,
-		emptyChar: " ",
-		pointChar: "X",
+		p:  p,
+		t:  t,
+		bg: " ",
 	}
 }
 
@@ -45,26 +44,30 @@ func (g *Game) ProcessKey(exit chan string) {
 
 func (g *Game) Update() {
 
-	ix := g.normalizedIndex(g.p.GetNextPosXY())
-	if g.canvas[ix] == g.pointChar {
-		spawIndex := g.spawnPoint(ix)
-		g.canvas[spawIndex] = g.pointChar
+	if g.t.Index() == g.p.NextIndex(g.w, g.h) {
+		for {
+			g.t.SpawNewLocation(g.p.GetTail())
+			if g.t.Index() != g.p.NextIndex(g.w, g.h) {
+				break
+			}
+		}
 		g.p.GrowTail()
 	}
+	g.canvas[g.t.Index()] = g.t.Visuals()
 
 	g.p.Update()
 
-	i := g.normalizedIndex(g.p.GetPosXY())
+	i := g.p.Index(g.w, g.h)
 
-	i_last := g.normalizedIndex(g.p.GetLastPosXY())
+	i_last := g.p.LastIndex(g.w, g.h)
 	g.canvas[i] = g.p.Visuals()
 
 	for _, t := range g.p.GetTail() {
-		ix := g.normalizedIndex(t.GetXY())
+		ix := t.Index(g.w, g.h)
 		g.canvas[ix] = g.p.Visuals()
 	}
 	if i_last != i {
-		g.canvas[i_last] = g.emptyChar
+		g.canvas[i_last] = g.bg
 	}
 }
 
@@ -79,7 +82,7 @@ func (g *Game) CreateCanvas(w, h int) {
 
 	for range h {
 		for range w {
-			g.canvas = append(g.canvas, g.emptyChar)
+			g.canvas = append(g.canvas, g.bg)
 		}
 	}
 
@@ -99,8 +102,16 @@ func (g *Game) CreateCanvas(w, h int) {
 		}
 	}
 
-	i := g.spawnPoint(0)
-	g.canvas[i] = g.pointChar
+	g.t.AddSeed(g.w, g.h)
+
+	for {
+		g.t.SpawNewLocation(g.p.GetTail())
+		if g.t.Index() != g.p.Index(g.w, g.h) {
+			break
+		}
+	}
+	// fmt.Print(g.normalizedIndex(g.t.GetPosXY()))
+	g.canvas[g.t.Index()] = g.t.Visuals()
 }
 
 func (g *Game) Render() {
@@ -135,31 +146,4 @@ func (g *Game) Render() {
 
 func (g *Game) clearScreen() {
 	fmt.Printf("\033[%dA", g.h+2)
-}
-
-func (g *Game) normalizedIndex(posX, posY int) int {
-	x := 0
-	y := 0
-	if posX < 0 {
-		x = (g.w - 1) - ((posX * -1) % g.w)
-	} else {
-		x = posX % g.w
-	}
-	if posY < 0 {
-		y = (g.h - 1) - ((posY * -1) % g.h)
-	} else {
-		y = posY % g.h
-	}
-	return y*g.w + x
-}
-
-func (g *Game) spawnPoint(i_avoid int) int {
-	i := 0
-	for {
-		i = rand.IntN(g.h * g.w)
-		if i != i_avoid {
-			break
-		}
-	}
-	return i
 }

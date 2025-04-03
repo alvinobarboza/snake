@@ -7,9 +7,9 @@ import (
 )
 
 type Player interface {
-	GetPosXY() (int, int)
-	GetNextPosXY() (int, int)
-	GetLastPosXY() (int, int)
+	Index(w, h int) int
+	NextIndex(w, h int) int
+	LastIndex(w, h int) int
 	GetTail() []Transform
 	Visuals() string
 	Update()
@@ -29,31 +29,45 @@ type player struct {
 
 func NewPlayer() *player {
 	return &player{
-		playerChar: "■",
+		playerChar: "█",
 		tail:       make([]Transform, 0),
 	}
 }
 
-func (p *player) GetNextPosXY() (int, int) {
+func (p *player) NextIndex(w, h int) int {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	return p.head.curPos.x + p.direction.x,
-		p.head.curPos.y + p.direction.y
+	x := p.head.curPos.x + p.direction.x
+	y := p.head.curPos.y + p.direction.y
+
+	return internal.NormalizedIndex(x, y, w, h)
 }
 
-func (p *player) GetPosXY() (int, int) {
+func (p *player) Index(w, h int) int {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	return p.head.curPos.x, p.head.curPos.y
+	return internal.NormalizedIndex(
+		p.head.curPos.x,
+		p.head.curPos.y,
+		w, h,
+	)
 }
 
-func (p *player) GetLastPosXY() (int, int) {
+func (p *player) LastIndex(w, h int) int {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	if len(p.tail) < 1 {
-		return p.head.lastPos.x, p.head.lastPos.y
+		return internal.NormalizedIndex(
+			p.head.lastPos.x,
+			p.head.lastPos.y,
+			w, h,
+		)
 	}
-	return p.tail[0].lastPos.x, p.tail[0].lastPos.y
+	return internal.NormalizedIndex(
+		p.tail[0].lastPos.x,
+		p.tail[0].lastPos.y,
+		w, h,
+	)
 }
 
 func (p *player) GetTail() []Transform {
