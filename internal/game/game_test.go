@@ -15,30 +15,39 @@ const (
 type playerTest struct {
 }
 
-func (p playerTest) Update()         {}
-func (p playerTest) GrowTail()       {}
-func (p playerTest) Visuals() string { return "" }
-func (p playerTest) GetPosXY() (int, int) {
-	return 0, 1
+func (p playerTest) Update()                 {}
+func (p playerTest) GrowTail()               {}
+func (p playerTest) Collision(x, y int) bool { return false }
+func (p playerTest) Visuals() string         { return "X" }
+func (p playerTest) Index(int, int) int {
+	return 1
 }
-func (p playerTest) GetNextPosXY() (int, int) {
-	return 0, 1
+func (p playerTest) NextIndex(int, int) int {
+	return 1
 }
-func (p playerTest) GetLastPosXY() (int, int) {
-	return 0, 1
+func (p playerTest) LastIndex(int, int) int {
+	return 1
 }
 func (p playerTest) GetTail() []player.Transform {
 	return make([]player.Transform, 0)
 }
 func (p playerTest) ProcessKey(internal.InputKey) {}
 
+type tar struct{}
+
+func (p tar) Index() int                         { return 1 }
+func (p tar) Visuals() string                    { return "X" }
+func (p tar) AddSeed(int, int)                   {}
+func (p tar) SpawNewLocation([]player.Transform) {}
+
 func TestPlayerPos(t *testing.T) {
 	p := playerTest{}
-	g := NewGame(p)
+	ta := &tar{}
+	g := NewGame(p, ta)
 
 	g.h = 2
 	g.w = 2
-	i := g.normalizedIndex(g.p.GetPosXY())
+	i := g.p.Index(g.w, g.h)
 
 	if i < 0 {
 		t.Error("Expected positive, got:", i)
@@ -47,7 +56,8 @@ func TestPlayerPos(t *testing.T) {
 
 func TestScreenGen(t *testing.T) {
 	p := &playerTest{}
-	g := NewGame(p)
+	ta := &tar{}
+	g := NewGame(p, ta)
 
 	preComputedWidth := (width - internal.PADDING_SIDES)
 	preComputedHeight := (height - internal.PADDING_TOP_BOTTOM)
@@ -101,14 +111,15 @@ func TestScreenGen(t *testing.T) {
 
 func TestRandomSpawn(t *testing.T) {
 	p := playerTest{}
-	g := NewGame(p)
+	ta := &tar{}
+	g := NewGame(p, ta)
 
 	g.CreateCanvas(width, height)
 
 	want := "X"
 	got := "-"
 	for _, s := range g.canvas {
-		if s == g.pointChar {
+		if s == g.t.Visuals() {
 			got = s
 		}
 	}
