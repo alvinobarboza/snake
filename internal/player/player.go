@@ -18,6 +18,10 @@ type Player interface {
 	GrowTail()
 }
 
+type visualDirection struct {
+	u, d, l, r string
+}
+
 type player struct {
 	mu        sync.Mutex
 	direction cood
@@ -25,15 +29,20 @@ type player struct {
 
 	tail []Transform
 
-	playerChar string
-	tailChar   string
+	visuals  visualDirection
+	tailChar string
 }
 
 func NewPlayer() *player {
 	return &player{
-		tailChar:   "⩩",
-		playerChar: "█",
-		tail:       make([]Transform, 0),
+		tailChar: "▇",
+		visuals: visualDirection{
+			u: "▲",
+			d: "▼",
+			l: "◀",
+			r: "▶",
+		},
+		tail: make([]Transform, 0),
 	}
 }
 
@@ -80,9 +89,17 @@ func (p *player) GetTail() []Transform {
 }
 
 func (p *player) Visuals() string {
-	return p.playerChar
+	if p.direction.x == 1 {
+		return p.visuals.r
+	}
+	if p.direction.x == -1 {
+		return p.visuals.l
+	}
+	if p.direction.y == -1 {
+		return p.visuals.u
+	}
+	return p.visuals.d
 }
-
 func (p *player) VisualsTail() string {
 	return p.tailChar
 }
