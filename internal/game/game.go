@@ -44,6 +44,7 @@ func (g *Game) ProcessKey(exit chan string) {
 
 func (g *Game) Update() {
 
+	hasGrown := false
 	if g.t.Index() == g.p.NextIndex(g.w, g.h) {
 		for {
 			g.t.SpawNewLocation(g.p.GetTail())
@@ -52,10 +53,11 @@ func (g *Game) Update() {
 			}
 		}
 		g.p.GrowTail()
+		hasGrown = true
 	}
 	g.canvas[g.t.Index()] = g.t.Visuals()
 
-	g.p.Update()
+	g.p.Update(hasGrown)
 
 	i := g.p.Index(g.w, g.h)
 

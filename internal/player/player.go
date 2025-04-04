@@ -12,7 +12,7 @@ type Player interface {
 	LastIndex(w, h int) int
 	GetTail() []Transform
 	Visuals() string
-	Update()
+	Update(hasGrown bool)
 	ProcessKey(key internal.InputKey)
 	GrowTail()
 }
@@ -80,17 +80,19 @@ func (p *player) Visuals() string {
 	return p.playerChar
 }
 
-func (p *player) Update() {
+func (p *player) Update(hasGrown bool) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	lt := len(p.tail)
-	for i := range lt {
-		if i == lt-1 {
-			p.tail[i] = p.head
-			continue
+	if !hasGrown {
+		lt := len(p.tail)
+		for i := range lt {
+			if i == lt-1 {
+				p.tail[i] = p.head
+				continue
+			}
+			p.tail[i] = p.tail[i+1]
 		}
-		p.tail[i] = p.tail[i+1]
 	}
 	p.head.lastPos.x = p.head.curPos.x
 	p.head.lastPos.y = p.head.curPos.y

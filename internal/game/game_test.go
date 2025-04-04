@@ -15,7 +15,7 @@ const (
 type playerTest struct {
 }
 
-func (p playerTest) Update()                 {}
+func (p playerTest) Update(bool)             {}
 func (p playerTest) GrowTail()               {}
 func (p playerTest) Collision(x, y int) bool { return false }
 func (p playerTest) Visuals() string         { return "X" }
