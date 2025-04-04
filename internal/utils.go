@@ -11,8 +11,9 @@ const (
 
 	BORDERS int = 2
 
-	PADDING_SIDES      int = 6
-	PADDING_TOP_BOTTOM int = 4
+	PADDING_SIDES  int = 4
+	PADDING_TOP    int = 2
+	PADDING_BOTTOM int = 2
 )
 
 func NormalizedIndex(posX, posY, w, h int) int {

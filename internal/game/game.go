@@ -96,7 +96,7 @@ func (g *Game) Update() {
 }
 
 func (g *Game) CreateCanvas(w, h int) {
-	h -= internal.PADDING_TOP_BOTTOM
+	h -= (internal.PADDING_BOTTOM + internal.PADDING_TOP)
 	w -= internal.PADDING_SIDES
 
 	g.h = h
@@ -169,5 +169,5 @@ func (g *Game) Render() {
 }
 
 func (g *Game) clearScreen() {
-	fmt.Printf("\033[%dA", g.h+2)
+	fmt.Printf("\033[%dA", g.h+internal.PADDING_TOP)
 }

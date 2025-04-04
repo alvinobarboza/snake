@@ -9,7 +9,7 @@ import (
 
 const (
 	width  int = internal.PADDING_SIDES + 3
-	height int = internal.PADDING_TOP_BOTTOM + 3
+	height int = internal.PADDING_BOTTOM + internal.PADDING_TOP + 3
 )
 
 type playerTest struct {
@@ -62,7 +62,7 @@ func TestScreenGen(t *testing.T) {
 	g := NewGame(p, ta, make(chan string))
 
 	preComputedWidth := (width - internal.PADDING_SIDES)
-	preComputedHeight := (height - internal.PADDING_TOP_BOTTOM)
+	preComputedHeight := (height - (internal.PADDING_TOP + internal.PADDING_BOTTOM))
 
 	want_border := make([]string, 0)
 	want_border = append(want_border, "┌")
