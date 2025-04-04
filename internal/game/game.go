@@ -50,6 +50,13 @@ func (g *Game) ProcessKey() {
 
 func (g *Game) Update() {
 
+	if g.p.SelfCollide() {
+		g.exit <- fmt.Sprint(
+			"\033[0J\n\r",
+			"SKILL ISSUE!!! LOSER!",
+			"\n\r\n\r")
+		return
+	}
 	hasGrown := false
 	if g.t.Index() == g.p.NextIndex(g.w, g.h) {
 
@@ -57,7 +64,7 @@ func (g *Game) Update() {
 		hasGrown = true
 
 		if len(g.p.GetTail())+1 == g.h*g.w {
-			g.exit <- fmt.Sprint("You win!\033[0J", "\n\r")
+			g.exit <- fmt.Sprint("\033[0J\n\r", "YOU WON!", "\n\r")
 			return
 		}
 
