@@ -79,7 +79,7 @@ func (g *Game) Update() {
 
 	for _, t := range g.p.GetTail() {
 		ix := t.Index(g.w, g.h)
-		g.canvas[ix] = g.p.Visuals()
+		g.canvas[ix] = g.p.VisualsTail()
 	}
 	if i_last != i {
 		g.canvas[i_last] = g.bg

@@ -12,6 +12,7 @@ type Player interface {
 	LastIndex(w, h int) int
 	GetTail() []Transform
 	Visuals() string
+	VisualsTail() string
 	Update(hasGrown bool)
 	ProcessKey(key internal.InputKey)
 	GrowTail()
@@ -25,10 +26,12 @@ type player struct {
 	tail []Transform
 
 	playerChar string
+	tailChar   string
 }
 
 func NewPlayer() *player {
 	return &player{
+		tailChar:   "⩩",
 		playerChar: "█",
 		tail:       make([]Transform, 0),
 	}
@@ -78,6 +81,10 @@ func (p *player) GetTail() []Transform {
 
 func (p *player) Visuals() string {
 	return p.playerChar
+}
+
+func (p *player) VisualsTail() string {
+	return p.tailChar
 }
 
 func (p *player) Update(hasGrown bool) {

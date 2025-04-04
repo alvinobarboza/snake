@@ -19,6 +19,7 @@ func (p playerTest) Update(bool)             {}
 func (p playerTest) GrowTail()               {}
 func (p playerTest) Collision(x, y int) bool { return false }
 func (p playerTest) Visuals() string         { return "X" }
+func (p playerTest) VisualsTail() string     { return "X" }
 func (p playerTest) Index(int, int) int {
 	return 1
 }
