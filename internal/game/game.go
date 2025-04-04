@@ -51,10 +51,7 @@ func (g *Game) ProcessKey() {
 func (g *Game) Update() {
 
 	if g.p.SelfCollide(g.w, g.h) {
-		g.exit <- fmt.Sprint(
-			"\x1b[0J\n\r",
-			"SKILL ISSUE!!! LOSER!",
-			"\n\r\n\r")
+		g.exit <- g.messageOnLost()
 		return
 	}
 	hasGrown := false
@@ -176,4 +173,35 @@ func (g *Game) Render() {
 
 func (g *Game) clearScreen() {
 	fmt.Printf("\x1b[%dA", g.h+internal.PADDING_TOP)
+}
+
+func (g *Game) messageOnLost() string {
+
+	message := "SKILL ISSUE!!! LOSER!"
+
+	points := len(g.p.GetTail())
+	size := g.h * g.w
+
+	percentage := float32(points) / float32(size) * 100
+
+	if percentage > 10 {
+		message = "NOT SO BAD! BUT YOU LOST"
+	}
+
+	if percentage > 50 {
+		message = "HALF WAY! BUT YOU LOST"
+	}
+
+	if percentage > 80 {
+		message = "GETTING THERE! BUT YOU LOST"
+	}
+
+	if percentage > 95 {
+		message = "IMPRESSIVE! BUT YOU LOST"
+	}
+
+	return fmt.Sprint(
+		"\x1b[0J\n\r",
+		message,
+		"\n\r\n\r")
 }
