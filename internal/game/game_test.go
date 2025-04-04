@@ -43,7 +43,7 @@ func (p tar) SpawNewLocation([]player.Transform) {}
 func TestPlayerPos(t *testing.T) {
 	p := playerTest{}
 	ta := &tar{}
-	g := NewGame(p, ta)
+	g := NewGame(p, ta, make(chan string))
 
 	g.h = 2
 	g.w = 2
@@ -57,7 +57,7 @@ func TestPlayerPos(t *testing.T) {
 func TestScreenGen(t *testing.T) {
 	p := &playerTest{}
 	ta := &tar{}
-	g := NewGame(p, ta)
+	g := NewGame(p, ta, make(chan string))
 
 	preComputedWidth := (width - internal.PADDING_SIDES)
 	preComputedHeight := (height - internal.PADDING_TOP_BOTTOM)
@@ -112,7 +112,7 @@ func TestScreenGen(t *testing.T) {
 func TestRandomSpawn(t *testing.T) {
 	p := playerTest{}
 	ta := &tar{}
-	g := NewGame(p, ta)
+	g := NewGame(p, ta, make(chan string))
 
 	g.CreateCanvas(width, height)
 

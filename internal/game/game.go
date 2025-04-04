@@ -19,23 +19,29 @@ type Game struct {
 	borders []string
 
 	bg string
+
+	exit chan string
 }
 
-func NewGame(p player.Player, t player.Target) *Game {
+func NewGame(
+	p player.Player,
+	t player.Target,
+	exit chan string) *Game {
 	return &Game{
-		p:  p,
-		t:  t,
-		bg: " ",
+		p:    p,
+		t:    t,
+		bg:   " ",
+		exit: exit,
 	}
 }
 
-func (g *Game) ProcessKey(exit chan string) {
+func (g *Game) ProcessKey() {
 	b := make([]byte, 1)
 	for {
 		os.Stdin.Read(b)
 		key := internal.InputKey(b)
 		if key == internal.QUIT {
-			exit <- fmt.Sprint("Exited\033[0J", "\n\r")
+			g.exit <- fmt.Sprint("Exited\033[0J", "\n\r")
 			break
 		}
 		g.p.ProcessKey(key)
@@ -46,16 +52,23 @@ func (g *Game) Update() {
 
 	hasGrown := false
 	if g.t.Index() == g.p.NextIndex(g.w, g.h) {
+
+		g.p.GrowTail()
+		hasGrown = true
+
+		if len(g.p.GetTail())+1 == g.h*g.w {
+			g.exit <- fmt.Sprint("You win!\033[0J", "\n\r")
+			return
+		}
+
 		for {
 			g.t.SpawNewLocation(g.p.GetTail())
-			if g.t.Index() != g.p.NextIndex(g.w, g.h) {
+			if g.t.Index() != g.p.NextIndex(g.w, g.h) &&
+				g.t.Index() != g.p.Index(g.w, g.h) {
 				break
 			}
 		}
-		g.p.GrowTail()
-		hasGrown = true
 	}
-	g.canvas[g.t.Index()] = g.t.Visuals()
 
 	g.p.Update(hasGrown)
 
@@ -71,6 +84,8 @@ func (g *Game) Update() {
 	if i_last != i {
 		g.canvas[i_last] = g.bg
 	}
+	g.canvas[g.t.Index()] = g.t.Visuals()
+
 }
 
 func (g *Game) CreateCanvas(w, h int) {

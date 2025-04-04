@@ -27,13 +27,13 @@ func main() {
 
 	p := player.NewPlayer()
 	t := player.NewTarget()
+	ex := make(chan string)
 
-	game := game.NewGame(p, t)
+	game := game.NewGame(p, t, ex)
 
 	game.CreateCanvas(s.Col(), s.Row())
 
-	exit := make(chan string)
-	go game.ProcessKey(exit)
+	go game.ProcessKey()
 
 	go func() {
 		for {
@@ -43,5 +43,5 @@ func main() {
 		}
 	}()
 
-	fmt.Print(<-exit)
+	fmt.Print(<-ex)
 }
