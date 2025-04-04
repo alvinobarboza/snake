@@ -50,7 +50,7 @@ func (g *Game) ProcessKey() {
 
 func (g *Game) Update() {
 
-	if g.p.SelfCollide() {
+	if g.p.SelfCollide(g.w, g.h) {
 		g.exit <- fmt.Sprint(
 			"\033[0J\n\r",
 			"SKILL ISSUE!!! LOSER!",

@@ -16,7 +16,7 @@ type Player interface {
 	Update(hasGrown bool)
 	ProcessKey(key internal.InputKey)
 	GrowTail()
-	SelfCollide() bool
+	SelfCollide(w, h int) bool
 }
 
 type visualDirection struct {
@@ -154,13 +154,10 @@ func (p *player) GrowTail() {
 	p.tail = append(p.tail, p.head)
 }
 
-func (p *player) SelfCollide() bool {
-	x := p.head.curPos.x + p.direction.x
-	y := p.head.curPos.y + p.direction.y
+func (p *player) SelfCollide(w, h int) bool {
 
 	for _, t := range p.tail {
-		if t.curPos.x == x &&
-			t.curPos.y == y {
+		if t.Index(w, h) == p.NextIndex(w, h) {
 			return true
 		}
 	}
