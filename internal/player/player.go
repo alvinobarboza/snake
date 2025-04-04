@@ -131,19 +131,19 @@ func (p *player) ProcessKey(key internal.InputKey) {
 	defer p.mu.Unlock()
 
 	switch key {
-	case internal.UP:
+	case internal.UP, internal.UP_ARROW:
 		p.direction.y = -1
 		p.direction.x = 0
 		return
-	case internal.DOWN:
+	case internal.DOWN, internal.DOWN_ARROW:
 		p.direction.y = 1
 		p.direction.x = 0
 		return
-	case internal.RIGHT:
+	case internal.RIGHT, internal.RIGHT_ARROW:
 		p.direction.y = 0
 		p.direction.x = 1
 		return
-	case internal.LEFT:
+	case internal.LEFT, internal.LEFT_ARROW:
 		p.direction.y = 0
 		p.direction.x = -1
 		return

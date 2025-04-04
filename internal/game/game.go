@@ -36,12 +36,12 @@ func NewGame(
 }
 
 func (g *Game) ProcessKey() {
-	b := make([]byte, 1)
+	b := make([]byte, 3)
 	for {
-		os.Stdin.Read(b)
-		key := internal.InputKey(b)
+		n, _ := os.Stdin.Read(b)
+		key := internal.InputKey(b[:n])
 		if key == internal.QUIT {
-			g.exit <- fmt.Sprint("Exited\033[0J", "\n\r")
+			g.exit <- fmt.Sprint("Exited\x1b[0J", "\n\r")
 			break
 		}
 		g.p.ProcessKey(key)
