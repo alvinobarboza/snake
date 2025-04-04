@@ -52,7 +52,7 @@ func (g *Game) Update() {
 
 	if g.p.SelfCollide(g.w, g.h) {
 		g.exit <- fmt.Sprint(
-			"\033[0J\n\r",
+			"\x1b[0J\n\r",
 			"SKILL ISSUE!!! LOSER!",
 			"\n\r\n\r")
 		return
@@ -64,7 +64,7 @@ func (g *Game) Update() {
 		hasGrown = true
 
 		if len(g.p.GetTail())+1 == g.h*g.w {
-			g.exit <- fmt.Sprint("\033[0J\n\r", "YOU WON!", "\n\r")
+			g.exit <- fmt.Sprint("\x1b[0J\n\r", "YOU WON!", "\n\r")
 			return
 		}
 
@@ -169,5 +169,5 @@ func (g *Game) Render() {
 }
 
 func (g *Game) clearScreen() {
-	fmt.Printf("\033[%dA", g.h+internal.PADDING_TOP)
+	fmt.Printf("\x1b[%dA", g.h+internal.PADDING_TOP)
 }
