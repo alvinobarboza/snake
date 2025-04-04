@@ -24,11 +24,13 @@ func NormalizedIndex(posX, posY, w, h int) int {
 	x := 0
 	y := 0
 	if posX < 0 {
+		posX++
 		x = (w - 1) - ((posX * -1) % w)
 	} else {
 		x = posX % w
 	}
 	if posY < 0 {
+		posY++
 		y = (h - 1) - ((posY * -1) % h)
 	} else {
 		y = posY % h
