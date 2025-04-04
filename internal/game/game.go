@@ -142,9 +142,15 @@ func (g *Game) Render() {
 
 	borderWidth := len(g.borders) / 2
 
-	renderString := ""
+	renderString := fmt.Sprintf(" [Points %03d] ",
+		len(g.p.GetTail()))
+
+	header := len(renderString)
 
 	for i := range borderWidth {
+		if i < header {
+			continue
+		}
 		renderString += g.borders[i]
 	}
 	renderString += "\n\r "
