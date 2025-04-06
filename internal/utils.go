@@ -8,6 +8,7 @@ const (
 	LEFT        InputKey = "a"
 	RIGHT       InputKey = "d"
 	QUIT        InputKey = "q"
+	RESTART     InputKey = "r"
 	UP_ARROW    InputKey = "\x1b[A"
 	DOWN_ARROW  InputKey = "\x1b[B"
 	RIGHT_ARROW InputKey = "\x1b[C"

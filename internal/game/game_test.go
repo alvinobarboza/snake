@@ -41,10 +41,10 @@ func (p playerTest) ProcessKey(internal.InputKey) {}
 
 type tar struct{}
 
-func (p tar) Index() int                         { return 5 }
-func (p tar) Visuals() string                    { return "X" }
-func (p tar) AddSeed(int, int)                   {}
-func (p tar) SpawNewLocation([]player.Transform) {}
+func (p tar) Index() int                              { return 5 }
+func (p tar) Visuals() string                         { return "X" }
+func (p tar) AddSeed(int, int)                        {}
+func (p tar) SpawNewLocation([]player.Transform, int) {}
 
 func TestPlayerPos(t *testing.T) {
 	p := playerTest{}

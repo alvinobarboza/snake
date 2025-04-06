@@ -7,7 +7,7 @@ import (
 
 type Target interface {
 	Index() int
-	SpawNewLocation(tail []Transform)
+	SpawNewLocation(tail []Transform, head int)
 	Visuals() string
 	AddSeed(x, y int)
 }
@@ -28,7 +28,7 @@ func (t *target) Index() int {
 	return t.idx
 }
 
-func (t *target) SpawNewLocation(tail []Transform) {
+func (t *target) SpawNewLocation(tail []Transform, head int) {
 	ix := 0
 	isNotCollinding := true
 
@@ -42,7 +42,7 @@ func (t *target) SpawNewLocation(tail []Transform) {
 			}
 			fmt.Print(ix, tl.Index(t.seed.x, t.seed.y), "\r")
 		}
-		if isNotCollinding {
+		if isNotCollinding && ix != head {
 			break
 		}
 	}

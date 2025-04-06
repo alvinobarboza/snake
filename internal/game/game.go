@@ -47,6 +47,12 @@ func (g *Game) ProcessKey() {
 			g.exit <- fmt.Sprint("Exited\x1b[0J", "\n\r")
 			break
 		}
+		if key == internal.RESTART {
+			g.p = player.NewPlayer()
+			g.cleanCanvas()
+			g.t.SpawNewLocation(g.p.GetTail(), g.p.Index(g.w, g.h))
+			continue
+		}
 		g.p.ProcessKey(key)
 	}
 }
@@ -74,9 +80,8 @@ func (g *Game) Update() {
 		}
 
 		for {
-			g.t.SpawNewLocation(g.p.GetTail())
-			if g.t.Index() != g.p.NextIndex(g.w, g.h) &&
-				g.t.Index() != g.p.Index(g.w, g.h) {
+			g.t.SpawNewLocation(g.p.GetTail(), g.p.Index(g.w, g.h))
+			if g.t.Index() != g.p.NextIndex(g.w, g.h) {
 				break
 			}
 		}
@@ -109,13 +114,7 @@ func (g *Game) CreateCanvas(w, h int) {
 	g.h = h
 	g.w = w
 
-	g.canvas = make([]string, 0)
-
-	for range h {
-		for range w {
-			g.canvas = append(g.canvas, g.bg)
-		}
-	}
+	g.cleanCanvas()
 
 	for i := range internal.BORDERS {
 		if i == 0 {
@@ -134,15 +133,16 @@ func (g *Game) CreateCanvas(w, h int) {
 	}
 
 	g.t.AddSeed(g.w, g.h)
+	g.t.SpawNewLocation(g.p.GetTail(), g.p.Index(g.w, g.h))
+}
 
-	for {
-		g.t.SpawNewLocation(g.p.GetTail())
-		if g.t.Index() != g.p.Index(g.w, g.h) {
-			break
+func (g *Game) cleanCanvas() {
+	g.canvas = make([]string, 0)
+	for range g.h {
+		for range g.w {
+			g.canvas = append(g.canvas, g.bg)
 		}
 	}
-	// fmt.Print(g.normalizedIndex(g.t.GetPosXY()))
-	g.canvas[g.t.Index()] = g.t.Visuals()
 }
 
 func (g *Game) Render() {
