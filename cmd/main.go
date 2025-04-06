@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/alvinobarboza/snake/internal"
 	"github.com/alvinobarboza/snake/internal/game"
 	"github.com/alvinobarboza/snake/internal/player"
 	"github.com/olekukonko/ts"
@@ -22,6 +23,15 @@ func main() {
 
 	if e != nil {
 		fmt.Println(e)
+		return
+	}
+
+	if s.Col() < internal.MIN_SCREEN_WIDTH ||
+		s.Row() < internal.MIN_SCREEN_HEIGHT {
+		fmt.Printf("The terminal window must have a minimum size of %2dx%02d characters. \n\r",
+			internal.MIN_SCREEN_WIDTH,
+			internal.MIN_SCREEN_HEIGHT,
+		)
 		return
 	}
 
