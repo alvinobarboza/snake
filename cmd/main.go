@@ -35,13 +35,21 @@ func main() {
 		return
 	}
 
+	w, h := s.Col(), s.Row()
+	if w > internal.MAX_SCREEN_WIDTH {
+		w = internal.MAX_SCREEN_WIDTH
+	}
+	if h > internal.MAX_SCREEN_HEIGHT {
+		h = internal.MAX_SCREEN_HEIGHT
+	}
+
 	p := player.NewPlayer()
 	t := player.NewTarget()
 	ex := make(chan string)
 
 	game := game.NewGame(p, t, ex)
 
-	game.CreateCanvas(s.Col(), s.Row())
+	game.CreateCanvas(w, h)
 
 	go game.ProcessKey()
 

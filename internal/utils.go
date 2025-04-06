@@ -22,6 +22,9 @@ const (
 
 	MIN_SCREEN_WIDTH  int = 32
 	MIN_SCREEN_HEIGHT int = 9
+
+	MAX_SCREEN_WIDTH  int = 100
+	MAX_SCREEN_HEIGHT int = 30
 )
 
 func NormalizedIndex(posX, posY, w, h int) int {
