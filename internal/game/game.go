@@ -3,12 +3,15 @@ package game
 import (
 	"fmt"
 	"os"
+	"sync"
 
 	"github.com/alvinobarboza/snake/internal"
 	"github.com/alvinobarboza/snake/internal/player"
 )
 
 type Game struct {
+	mu sync.Mutex
+
 	p player.Player
 	t player.Target
 
@@ -48,9 +51,11 @@ func (g *Game) ProcessKey() {
 			break
 		}
 		if key == internal.RESTART {
+			g.mu.Lock()
 			g.p = player.NewPlayer()
 			g.cleanCanvas()
 			g.t.SpawNewLocation(g.p.GetTail(), g.p.Index(g.w, g.h))
+			g.mu.Unlock()
 			continue
 		}
 		g.p.ProcessKey(key)
@@ -58,6 +63,9 @@ func (g *Game) ProcessKey() {
 }
 
 func (g *Game) Update() {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+
 	if g.p.IsLoser() || g.p.IsWinner() {
 		g.updateCanvasVisuals()
 		return
@@ -146,6 +154,9 @@ func (g *Game) cleanCanvas() {
 }
 
 func (g *Game) Render() {
+	g.clearScreen()
+	g.mu.Lock()
+	defer g.mu.Unlock()
 
 	borderWidth := len(g.borders) / 2
 
