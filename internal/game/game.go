@@ -34,7 +34,7 @@ func NewGame(
 		t:            t,
 		bg:           " ",
 		exit:         exit,
-		howToMessage: " \r\n[ UP-DOWN:W/↑  S/↓ ]    \n\r[ LEFT-RIGHT:A/←  D/→ ]\r",
+		howToMessage: internal.HowToMessage(),
 	}
 }
 
