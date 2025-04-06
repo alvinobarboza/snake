@@ -21,6 +21,8 @@ type Game struct {
 	bg string
 
 	exit chan string
+
+	howToMessage string
 }
 
 func NewGame(
@@ -28,10 +30,11 @@ func NewGame(
 	t player.Target,
 	exit chan string) *Game {
 	return &Game{
-		p:    p,
-		t:    t,
-		bg:   " ",
-		exit: exit,
+		p:            p,
+		t:            t,
+		bg:           " ",
+		exit:         exit,
+		howToMessage: " \r\n[ UP-DOWN:W/↑  S/↓ ]    \n\r[ LEFT-RIGHT:A/←  D/→ ]\r",
 	}
 }
 
@@ -166,13 +169,16 @@ func (g *Game) Render() {
 	for i := range borderWidth {
 		renderString += g.borders[i+borderWidth]
 	}
-	fmt.Print(renderString + "\n\r")
+
+	renderString += g.howToMessage
+
+	fmt.Print(renderString)
 
 	g.clearScreen()
 }
 
 func (g *Game) clearScreen() {
-	fmt.Printf("\x1b[%dA", g.h+internal.PADDING_TOP)
+	fmt.Printf("\x1b[%dA", g.h+internal.PADDING_TOP+internal.PADDING_BOTTOM)
 }
 
 func (g *Game) messageOnLost() string {
