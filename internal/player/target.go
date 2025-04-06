@@ -1,7 +1,6 @@
 package player
 
 import (
-	"fmt"
 	"math/rand/v2"
 )
 
@@ -40,7 +39,6 @@ func (t *target) SpawNewLocation(tail []Transform, head int) {
 				isNotCollinding = false
 				break
 			}
-			fmt.Print(ix, tl.Index(t.seed.x, t.seed.y), "\r")
 		}
 		if isNotCollinding && ix != head {
 			break
