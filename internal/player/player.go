@@ -17,6 +17,24 @@ type Player interface {
 	ProcessKey(key internal.InputKey)
 	GrowTail()
 	SelfCollide(w, h int) bool
+	Won()
+	IsWinner() bool
+	Lost()
+	IsLoser() bool
+}
+
+type lostAnimation struct {
+	index  int
+	frames []string
+}
+
+func (l *lostAnimation) Frame() string {
+	frame := l.frames[l.index]
+	l.index++
+	if l.index == len(l.frames) {
+		l.index = 0
+	}
+	return frame
 }
 
 type visualDirection struct {
@@ -28,10 +46,14 @@ type player struct {
 	direction cood
 	head      Transform
 
+	won  bool
+	lost bool
+
 	tail []Transform
 
-	visuals  visualDirection
-	tailChar string
+	visuals     visualDirection
+	visualsLost lostAnimation
+	tailChar    string
 }
 
 func NewPlayer() *player {
@@ -42,6 +64,13 @@ func NewPlayer() *player {
 			d: "▼",
 			l: "◀",
 			r: "▶",
+		},
+		visualsLost: lostAnimation{
+			frames: []string{
+				"□", "▣",
+				"▤", "▥", "▦",
+				"▧", "▨", "▩",
+			},
 		},
 		tail: make([]Transform, 0),
 	}
@@ -90,6 +119,10 @@ func (p *player) GetTail() []Transform {
 }
 
 func (p *player) Visuals() string {
+	if p.lost {
+		return p.visualsLost.Frame()
+	}
+
 	if p.direction.x == 1 {
 		return p.visuals.r
 	}
@@ -163,4 +196,22 @@ func (p *player) SelfCollide(w, h int) bool {
 	}
 
 	return false
+}
+
+func (p *player) Won() {
+	p.won = true
+	p.lost = false
+}
+
+func (p *player) Lost() {
+	p.won = false
+	p.lost = true
+}
+
+func (p *player) IsWinner() bool {
+	return p.won
+}
+
+func (p *player) IsLoser() bool {
+	return p.lost
 }

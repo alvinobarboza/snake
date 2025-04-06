@@ -52,19 +52,24 @@ func (g *Game) ProcessKey() {
 }
 
 func (g *Game) Update() {
-
-	if g.p.SelfCollide(g.w, g.h) {
-		g.exit <- g.messageOnLost()
+	if g.p.IsLoser() || g.p.IsWinner() {
+		g.updateCanvasVisuals()
 		return
 	}
 	hasGrown := false
+
+	if g.p.SelfCollide(g.w, g.h) {
+		g.p.Lost()
+		g.p.Update(hasGrown)
+		return
+	}
 	if g.t.Index() == g.p.NextIndex(g.w, g.h) {
 
 		g.p.GrowTail()
 		hasGrown = true
 
 		if len(g.p.GetTail())+1 == g.h*g.w {
-			g.exit <- fmt.Sprint("\x1b[0J\n\r", "YOU WON!", "\n\r")
+			g.p.Won()
 			return
 		}
 
@@ -76,23 +81,25 @@ func (g *Game) Update() {
 			}
 		}
 	}
-
 	g.p.Update(hasGrown)
+	g.updateCanvasVisuals()
+}
 
+func (g *Game) updateCanvasVisuals() {
 	i := g.p.Index(g.w, g.h)
 
 	i_last := g.p.LastIndex(g.w, g.h)
-	g.canvas[i] = g.p.Visuals()
 
 	for _, t := range g.p.GetTail() {
 		ix := t.Index(g.w, g.h)
 		g.canvas[ix] = g.p.VisualsTail()
 	}
+	g.canvas[i] = g.p.Visuals()
+
 	if i_last != i {
 		g.canvas[i_last] = g.bg
 	}
 	g.canvas[g.t.Index()] = g.t.Visuals()
-
 }
 
 func (g *Game) CreateCanvas(w, h int) {
@@ -142,8 +149,7 @@ func (g *Game) Render() {
 
 	borderWidth := len(g.borders) / 2
 
-	renderString := fmt.Sprintf(" [Points %03d/%03d] ",
-		len(g.p.GetTail()), (g.h*g.w)-2)
+	renderString := g.headerMessage()
 
 	header := len(renderString)
 
@@ -206,8 +212,22 @@ func (g *Game) messageOnLost() string {
 		message = "IMPRESSIVE! BUT YOU LOST"
 	}
 
-	return fmt.Sprint(
-		"\x1b[0J\n\r",
-		message,
-		"\n\r\n\r")
+	return message
+}
+
+func (g *Game) messageOnWin() string {
+	return "YOU WON!"
+}
+
+func (g *Game) headerMessage() string {
+	if g.p.IsWinner() {
+		return g.messageOnWin()
+	}
+
+	if g.p.IsLoser() {
+		return g.messageOnLost()
+	}
+
+	return fmt.Sprintf(" [Points %03d/%03d] ",
+		len(g.p.GetTail()), (g.h*g.w)-2)
 }

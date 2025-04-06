@@ -16,6 +16,10 @@ type playerTest struct {
 }
 
 func (p playerTest) Update(bool)               {}
+func (p playerTest) Won()                      {}
+func (p playerTest) IsWinner() bool            { return false }
+func (p playerTest) Lost()                     {}
+func (p playerTest) IsLoser() bool             { return false }
 func (p playerTest) SelfCollide(w, h int) bool { return false }
 func (p playerTest) GrowTail()                 {}
 func (p playerTest) Collision(x, y int) bool   { return false }
