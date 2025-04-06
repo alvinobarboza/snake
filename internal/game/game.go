@@ -44,7 +44,7 @@ func (g *Game) ProcessKey() {
 		n, _ := os.Stdin.Read(b)
 		key := internal.InputKey(b[:n])
 		if key == internal.QUIT {
-			g.exit <- fmt.Sprint("Exited\x1b[0J", "\n\r")
+			g.exit <- "\x1b[H\x1b[0J\n\rExited!\n\r\n\r"
 			break
 		}
 		if key == internal.RESTART {
@@ -179,12 +179,10 @@ func (g *Game) Render() {
 	renderString += g.howToMessage
 
 	fmt.Print(renderString)
-
-	g.clearScreen()
 }
 
 func (g *Game) clearScreen() {
-	fmt.Printf("\x1b[%dA", g.h+internal.PADDING_TOP+internal.PADDING_BOTTOM)
+	fmt.Print("\x1b[H")
 }
 
 func (g *Game) messageOnLost() string {
