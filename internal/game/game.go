@@ -177,14 +177,14 @@ func (g *Game) clearScreen() {
 
 func (g *Game) messageOnLost() string {
 
-	message := "SKILL ISSUE!!! LOSER!"
+	message := "SKILL ISSUE!!! YOU LOST!"
 
 	points := len(g.p.GetTail())
 	size := g.h * g.w
 
 	percentage := float32(points) / float32(size) * 100
 
-	if percentage > 10 {
+	if points > 5 {
 		message = "NOT SO BAD! BUT YOU LOST"
 	}
 
